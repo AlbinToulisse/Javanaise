@@ -34,9 +34,7 @@ public class Irc {
 		
 		// look up the IRC object in the JVN server
 		// if not found, create it, and register it in the JVN server
-		System.out.println("avant");
 		JvnObject jo = js.jvnLookupObject("IRC");
-		System.out.println("apres");
 		   
 		if (jo == null) {
 			jo = js.jvnCreateObject((Serializable) new Sentence());
