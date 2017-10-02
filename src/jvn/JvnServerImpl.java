@@ -10,6 +10,7 @@ package jvn;
 
 import java.io.Serializable;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 
@@ -32,7 +33,8 @@ public class JvnServerImpl
 	private JvnServerImpl() throws Exception {
 		super();
 		objects = new HashMap<Integer, JvnObject>();
-		coord = (JvnRemoteCoord) LocateRegistry.getRegistry().lookup("coord");
+		Registry r = LocateRegistry.getRegistry();
+		coord = (JvnRemoteCoord) r.lookup("coord");
 	}
 	
   /**
@@ -45,6 +47,7 @@ public class JvnServerImpl
 			try {
 				js = new JvnServerImpl();
 			} catch (Exception e) {
+				System.out.println(e.getClass() + " " + e.getMessage());
 				return null;
 			}
 		}
@@ -71,7 +74,7 @@ public class JvnServerImpl
 	public  JvnObject jvnCreateObject(Serializable o) throws jvn.JvnException { 
 		try {
 			int id = coord.jvnGetObjectId();
-			JvnObject object = new JvnObjectImpl(id, o);
+			JvnObject object = new JvnObjectImpl(id, o, State.W);
 			objects.put(id, object);
 			return object;
 		} catch (Exception e) {

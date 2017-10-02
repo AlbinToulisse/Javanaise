@@ -1,0 +1,210 @@
+[1mdiff --git a/build/irc/Irc.class b/build/irc/Irc.class[m
+[1mindex 3748150..2d1bb1d 100644[m
+Binary files a/build/irc/Irc.class and b/build/irc/Irc.class differ
+[1mdiff --git a/build/irc/readListener.class b/build/irc/readListener.class[m
+[1mindex 20e2e5a..b58fb05 100644[m
+Binary files a/build/irc/readListener.class and b/build/irc/readListener.class differ
+[1mdiff --git a/build/irc/writeListener.class b/build/irc/writeListener.class[m
+[1mindex d098e3c..523e272 100644[m
+Binary files a/build/irc/writeListener.class and b/build/irc/writeListener.class differ
+[1mdiff --git a/build/jvn/JvnCoordImpl.class b/build/jvn/JvnCoordImpl.class[m
+[1mindex 14a09d9..caa50e7 100644[m
+Binary files a/build/jvn/JvnCoordImpl.class and b/build/jvn/JvnCoordImpl.class differ
+[1mdiff --git a/build/jvn/JvnObject.class b/build/jvn/JvnObject.class[m
+[1mindex b1b33d8..a24bc72 100644[m
+Binary files a/build/jvn/JvnObject.class and b/build/jvn/JvnObject.class differ
+[1mdiff --git a/build/jvn/JvnObjectImpl.class b/build/jvn/JvnObjectImpl.class[m
+[1mindex 04710c9..a69ee9a 100644[m
+Binary files a/build/jvn/JvnObjectImpl.class and b/build/jvn/JvnObjectImpl.class differ
+[1mdiff --git a/build/jvn/JvnServerImpl.class b/build/jvn/JvnServerImpl.class[m
+[1mindex 7a4a1d1..89728d1 100644[m
+Binary files a/build/jvn/JvnServerImpl.class and b/build/jvn/JvnServerImpl.class differ
+[1mdiff --git a/src/irc/Irc.java b/src/irc/Irc.java[m
+[1mindex 8ee3dcc..00c2fd1 100644[m
+[1m--- a/src/irc/Irc.java[m
+[1m+++ b/src/irc/Irc.java[m
+[36m@@ -24,7 +24,7 @@[m [mpublic class Irc {[m
+ [m
+   /**[m
+   * main method[m
+[31m-  * create a JVN object nammed IRC for representing the Chat application[m
+[32m+[m[32m  * create a JVN object named IRC for representing the Chat application[m
+   **/[m
+ 	public static void main(String argv[]) {[m
+ 	   try {[m
+[36m@@ -46,7 +46,7 @@[m [mpublic class Irc {[m
+ 		new Irc(jo);[m
+ 	   [m
+ 	   } catch (Exception e) {[m
+[31m-		   System.out.println("IRC problem : " + e.getMessage());[m
+[32m+[m		[32m   System.out.println("IRC problem : " + e.getMessage() + " / " + e.getClass());[m
+ 	   }[m
+ 	}[m
+ [m
+[36m@@ -71,12 +71,11 @@[m [mpublic class Irc {[m
+ 		write_button.addActionListener(new writeListener(this));[m
+ 		frame.add(write_button);[m
+ 		frame.setSize(545,201);[m
+[31m-		text.setBackground(Color.black); [m
+[32m+[m		[32mtext.setBackground(Color.black);[m
+ 		frame.setVisible(true);[m
+ 	}[m
+ }[m
+ [m
+[31m-[m
+  /**[m
+   * Internal class to manage user events (read) on the CHAT application[m
+   **/[m
+[1mdiff --git a/src/jvn/JvnCoordImpl.java b/src/jvn/JvnCoordImpl.java[m
+[1mindex 5f9279b..fdc0718 100644[m
+[1m--- a/src/jvn/JvnCoordImpl.java[m
+[1m+++ b/src/jvn/JvnCoordImpl.java[m
+[36m@@ -30,7 +30,7 @@[m [mpublic class JvnCoordImpl[m
+   * Default constructor[m
+   * @throws JvnException[m
+   **/[m
+[31m-	private JvnCoordImpl() throws Exception {[m
+[32m+[m	[32mpublic JvnCoordImpl() throws Exception {[m
+ 		super();[m
+ 		objects = new HashMap<Integer, JvnObject>();[m
+ 		names = new HashMap<String, Integer>();[m
+[1mdiff --git a/src/jvn/JvnObject.java b/src/jvn/JvnObject.java[m
+[1mindex e3e641c..6396462 100644[m
+[1m--- a/src/jvn/JvnObject.java[m
+[1m+++ b/src/jvn/JvnObject.java[m
+[36m@@ -79,4 +79,7 @@[m [mpublic interface JvnObject extends Serializable {[m
+ [m
+    public void setData(Serializable object)[m
+ 	 throws jvn.JvnException;[m
+[32m+[m[41m   [m
+[32m+[m[32m   public State JvnGetState()[m
+[32m+[m[32m     throws jvn.JvnException;[m
+ }[m
+[1mdiff --git a/src/jvn/JvnObjectImpl.java b/src/jvn/JvnObjectImpl.java[m
+[1mindex 89626b5..e3699ad 100644[m
+[1m--- a/src/jvn/JvnObjectImpl.java[m
+[1m+++ b/src/jvn/JvnObjectImpl.java[m
+[36m@@ -12,6 +12,12 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 		this.data = data;[m
+ 		this.state = State.NL;[m
+ 	}[m
+[32m+[m
+[32m+[m	[32mpublic JvnObjectImpl(int id, Serializable data, State state) {[m
+[32m+[m		[32mthis.id = id;[m
+[32m+[m		[32mthis.data = data;[m
+[32m+[m		[32mthis.state = state;[m
+[32m+[m	[32m}[m
+ 	[m
+ 	public void setData(Serializable data) throws JvnException{[m
+ 		this.data = data;[m
+[36m@@ -32,7 +38,7 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 			case RWC:[m
+ 				throw new JvnException("verrou Read deja pris");[m
+ 		}[m
+[31m-		[m
+[32m+[m		[32mSystem.out.println("after lockread state: " + state);[m
+ 	}[m
+ [m
+ 	public void jvnLockWrite() throws JvnException {[m
+[36m@@ -48,10 +54,10 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 			case W:[m
+ 				throw new JvnException("verrou Write deja pris");[m
+ 		}[m
+[31m-		[m
+[32m+[m		[32mSystem.out.println("after lockwrite state: " + state);[m
+ 	}[m
+ [m
+[31m-	public void jvnUnLock() throws JvnException {[m
+[32m+[m	[32mpublic synchronized void jvnUnLock() throws JvnException {[m
+ 		switch(state) {[m
+ 			case NL:[m
+ 				throw new JvnException("aucun verrou pris");[m
+[36m@@ -63,10 +69,12 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 				state = State.RC;[m
+ 				break;[m
+ 			case W:[m
+[32m+[m				[32m//mettre a jour sur coord?[m
+ 			case RWC:[m
+ 				state = State.WC;[m
+ 		}[m
+[31m-		[m
+[32m+[m		[32mnotify();[m
+[32m+[m		[32mSystem.out.println("after unlock state: " + state);[m
+ 	}[m
+ [m
+ 	public int jvnGetObjectId() throws JvnException {[m
+[36m@@ -76,6 +84,10 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 	public Serializable jvnGetObjectState() throws JvnException {[m
+ 		return data;[m
+ 	}[m
+[32m+[m[41m	[m
+[32m+[m	[32mpublic State JvnGetState() throws JvnException {[m
+[32m+[m		[32mreturn state;[m
+[32m+[m	[32m}[m
+ [m
+ 	public void jvnInvalidateReader() throws JvnException {[m
+ 		switch(state) {[m
+[36m@@ -95,7 +107,7 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 					e.printStackTrace();[m
+ 				}[m
+ 		}[m
+[31m-		[m
+[32m+[m		[32mSystem.out.println("after invalidatereader state: " + state);[m
+ 	}[m
+ [m
+ 	public Serializable jvnInvalidateWriter() throws JvnException {[m
+[36m@@ -116,6 +128,7 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 					e.printStackTrace();[m
+ 				}[m
+ 		}[m
+[32m+[m		[32mSystem.out.println("after invalidatewriter state: " + state);[m
+ 		return jvnGetObjectState();[m
+ 	}[m
+ [m
+[36m@@ -144,6 +157,7 @@[m [mpublic class JvnObjectImpl implements JvnObject {[m
+ 					e.printStackTrace();[m
+ 				}[m
+ 		}[m
+[32m+[m		[32mSystem.out.println("after invalidatewriterforreader state: " + state);[m
+ 		return jvnGetObjectState();[m
+ 	}[m
+ [m
+[1mdiff --git a/src/jvn/JvnServerImpl.java b/src/jvn/JvnServerImpl.java[m
+[1mindex bf00ea0..42036b1 100644[m
+[1m--- a/src/jvn/JvnServerImpl.java[m
+[1m+++ b/src/jvn/JvnServerImpl.java[m
+[36m@@ -10,6 +10,7 @@[m [mpackage jvn;[m
+ [m
+ import java.io.Serializable;[m
+ import java.rmi.registry.LocateRegistry;[m
+[32m+[m[32mimport java.rmi.registry.Registry;[m
+ import java.rmi.server.UnicastRemoteObject;[m
+ import java.util.HashMap;[m
+ [m
+[36m@@ -32,7 +33,8 @@[m [mpublic class JvnServerImpl[m
+ 	private JvnServerImpl() throws Exception {[m
+ 		super();[m
+ 		objects = new HashMap<Integer, JvnObject>();[m
+[31m-		coord = (JvnRemoteCoord) LocateRegistry.getRegistry().lookup("coord");[m
+[32m+[m		[32mRegistry r = LocateRegistry.getRegistry();[m
+[32m+[m		[32mcoord = (JvnRemoteCoord) r.lookup("coord");[m
+ 	}[m
+ 	[m
+   /**[m
+[36m@@ -45,6 +47,7 @@[m [mpublic class JvnServerImpl[m
+ 			try {[m
+ 				js = new JvnServerImpl();[m
+ 			} catch (Exception e) {[m
+[32m+[m				[32mSystem.out.println(e.getClass() + " " + e.getMessage());[m
+ 				return null;[m
+ 			}[m
+ 		}[m
+[36m@@ -71,7 +74,7 @@[m [mpublic class JvnServerImpl[m
+ 	public  JvnObject jvnCreateObject(Serializable o) throws jvn.JvnException { [m
+ 		try {[m
+ 			int id = coord.jvnGetObjectId();[m
+[31m-			JvnObject object = new JvnObjectImpl(id, o);[m
+[32m+[m			[32mJvnObject object = new JvnObjectImpl(id, o, State.W);[m
+ 			objects.put(id, object);[m
+ 			return object;[m
+ 		} catch (Exception e) {[m

@@ -30,7 +30,7 @@ public class JvnCoordImpl
   * Default constructor
   * @throws JvnException
   **/
-	private JvnCoordImpl() throws Exception {
+	public JvnCoordImpl() throws Exception {
 		super();
 		objects = new HashMap<Integer, JvnObject>();
 		names = new HashMap<String, Integer>();
