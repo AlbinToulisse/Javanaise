@@ -74,7 +74,8 @@ public class JvnServerImpl
 	public  JvnObject jvnCreateObject(Serializable o) throws jvn.JvnException { 
 		try {
 			int id = coord.jvnGetObjectId();
-			JvnObject object = new JvnObjectImpl(id, o, State.W);
+			JvnObject object = new JvnObjectImpl(id, o);
+			object.jvnLockWrite();
 			objects.put(id, object);
 			return object;
 		} catch (Exception e) {
@@ -105,8 +106,10 @@ public class JvnServerImpl
 	public  JvnObject jvnLookupObject(String jon) throws jvn.JvnException {
 		try {
 			JvnObject object = coord.jvnLookupObject(jon, this);
-			if (object != null) objects.put(object.jvnGetObjectId(), object);
-			return object;
+			if (object == null) return null;
+			JvnObject new_object = new JvnObjectImpl(object.jvnGetObjectId(), object.jvnGetObjectState());
+			objects.put(object.jvnGetObjectId(), new_object);
+			return new_object;
 		} catch (Exception e) {
 			throw new JvnException(e.getMessage());
 		}

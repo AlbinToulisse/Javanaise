@@ -114,7 +114,7 @@ public class JvnCoordImpl
 	   Serializable data;
 	   if (writeMode == null) {
 		   JvnObject object = objects.get(joi);
-		   if (object != null) data = objects.get(joi).jvnGetObjectState();
+		   if (object != null) data = object.jvnGetObjectState();
 		   else data = null;
 	   } else {
 		   data = writeMode.jvnInvalidateWriter(joi);

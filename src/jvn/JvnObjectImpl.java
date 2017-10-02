@@ -12,12 +12,6 @@ public class JvnObjectImpl implements JvnObject {
 		this.data = data;
 		this.state = State.NL;
 	}
-
-	public JvnObjectImpl(int id, Serializable data, State state) {
-		this.id = id;
-		this.data = data;
-		this.state = state;
-	}
 	
 	public void setData(Serializable data) throws JvnException{
 		this.data = data;
@@ -38,7 +32,6 @@ public class JvnObjectImpl implements JvnObject {
 			case RWC:
 				throw new JvnException("verrou Read deja pris");
 		}
-		System.out.println("after lockread state: " + state);
 	}
 
 	public void jvnLockWrite() throws JvnException {
@@ -46,7 +39,7 @@ public class JvnObjectImpl implements JvnObject {
 			case NL:
 			case RC:
 			case R:
-				data = JvnServerImpl.jvnGetServer().jvnLockWrite(id);
+				JvnServerImpl.jvnGetServer().jvnLockWrite(id);
 			case WC:
 			case RWC:
 				state = State.W;
@@ -54,7 +47,6 @@ public class JvnObjectImpl implements JvnObject {
 			case W:
 				throw new JvnException("verrou Write deja pris");
 		}
-		System.out.println("after lockwrite state: " + state);
 	}
 
 	public synchronized void jvnUnLock() throws JvnException {
@@ -69,12 +61,10 @@ public class JvnObjectImpl implements JvnObject {
 				state = State.RC;
 				break;
 			case W:
-				//mettre a jour sur coord?
 			case RWC:
 				state = State.WC;
 		}
 		notify();
-		System.out.println("after unlock state: " + state);
 	}
 
 	public int jvnGetObjectId() throws JvnException {
@@ -107,7 +97,6 @@ public class JvnObjectImpl implements JvnObject {
 					e.printStackTrace();
 				}
 		}
-		System.out.println("after invalidatereader state: " + state);
 	}
 
 	public Serializable jvnInvalidateWriter() throws JvnException {
@@ -128,7 +117,6 @@ public class JvnObjectImpl implements JvnObject {
 					e.printStackTrace();
 				}
 		}
-		System.out.println("after invalidatewriter state: " + state);
 		return jvnGetObjectState();
 	}
 
@@ -157,8 +145,10 @@ public class JvnObjectImpl implements JvnObject {
 					e.printStackTrace();
 				}
 		}
-		System.out.println("after invalidatewriterforreader state: " + state);
 		return jvnGetObjectState();
 	}
 
+	public void setState(State state) throws JvnException {
+		this.state = state;
+	}
 }
