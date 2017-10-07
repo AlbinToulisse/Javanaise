@@ -21,7 +21,7 @@ public class JvnCoordImpl
 	
 	private HashMap<Integer, JvnObject> objects;
 	private HashMap<String, Integer> names;
-	private HashMap<JvnRemoteServer, List<JvnObject>> remoteObjects;
+	private HashMap<JvnRemoteServer, List<Integer>> remoteObjects;
 	private HashMap<Integer, List<JvnRemoteServer>> readServers;
 	private HashMap<Integer, JvnRemoteServer> writeServer;
 	private int id;
@@ -34,7 +34,7 @@ public class JvnCoordImpl
 		super();
 		objects = new HashMap<Integer, JvnObject>();
 		names = new HashMap<String, Integer>();
-		remoteObjects = new HashMap<JvnRemoteServer, List<JvnObject>>();
+		remoteObjects = new HashMap<JvnRemoteServer, List<Integer>>();
 		readServers = new HashMap<Integer, List<JvnRemoteServer>>();
 		writeServer = new HashMap<Integer, JvnRemoteServer>();
 		id = 0;
@@ -61,9 +61,9 @@ public class JvnCoordImpl
 	  int id = jo.jvnGetObjectId();
 	  objects.put(id, jo);
 	  names.put(jon, id);
-	  List<JvnObject> serverObjects = remoteObjects.get(js);
-	  if (serverObjects == null) serverObjects = new ArrayList<JvnObject>();
-	  serverObjects.add(jo);
+	  List<Integer> serverObjects = remoteObjects.get(js);
+	  if (serverObjects == null) serverObjects = new ArrayList<Integer>();
+	  serverObjects.add(id);
 	  remoteObjects.put(js, serverObjects);
 	  readServers.put(id, new ArrayList<JvnRemoteServer>());
   }
@@ -77,8 +77,8 @@ public class JvnCoordImpl
   public JvnObject jvnLookupObject(String jon, JvnRemoteServer js) throws java.rmi.RemoteException,jvn.JvnException{
 	  JvnObject object = objects.get(names.get(jon));
 	  if (object == null) return null;
-	  if (remoteObjects.get(js) == null) remoteObjects.put(js, new ArrayList<JvnObject>());
-	  remoteObjects.get(js).add(object);
+	  if (remoteObjects.get(js) == null) remoteObjects.put(js, new ArrayList<Integer>());
+	  remoteObjects.get(js).add(object.jvnGetObjectId());
 	  return object;
   }
   
@@ -140,9 +140,11 @@ public class JvnCoordImpl
 	* @throws java.rmi.RemoteException, JvnException
 	**/
     public void jvnTerminate(JvnRemoteServer js) throws java.rmi.RemoteException, JvnException {
-    	for (JvnObject object : remoteObjects.get(js)) {
-    		readServers.get(object.jvnGetObjectId()).remove(js);
-    		if (writeServer.get(object.jvnGetObjectId()) == js) writeServer.remove(object.jvnGetObjectId());    		
+    	for (Integer id : remoteObjects.get(js)) {
+    		readServers.get(id).remove(js);
+    		if (writeServer.get(id).equals(js)) {
+    			writeServer.remove(id);
+    		}
     	}
     	remoteObjects.remove(js);
     }

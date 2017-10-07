@@ -35,18 +35,19 @@ public class Irc {
 		// look up the IRC object in the JVN server
 		// if not found, create it, and register it in the JVN server
 		JvnObject jo = js.jvnLookupObject("IRC");
+		
 		if (jo == null) {
 			jo = js.jvnCreateObject((Serializable) new Sentence());
 			// after creation, I have a write lock on the object
 			jo.jvnUnLock();
 			js.jvnRegisterObject("IRC", jo);
 		}
-		System.out.println("state: " + jo.JvnGetState());
+		
 		// create the graphical part of the Chat application
 		new Irc(jo);
 	   
 	   } catch (Exception e) {
-		   System.out.println("IRC problem : " + e.getMessage() + " / " + e.getClass());
+		   System.out.println("IRC problem main : " + e.getMessage() + " / " + e.getClass());
 	   }
 	}
 
@@ -70,6 +71,23 @@ public class Irc {
 		Button write_button = new Button("write");
 		write_button.addActionListener(new writeListener(this));
 		frame.add(write_button);
+		frame.addWindowListener(new WindowListener() {
+			public void windowClosing(WindowEvent e) {
+				try {
+					JvnServerImpl.jvnGetServer().jvnTerminate();
+				} catch (JvnException e1) {
+					e1.printStackTrace();
+				}
+				frame.dispose();
+				System.exit(0);
+			}
+			public void windowActivated(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) {}
+			public void windowDeactivated(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowOpened(WindowEvent e) {}
+		});
 		frame.setSize(545,201);
 		text.setBackground(Color.black);
 		frame.setVisible(true);
@@ -93,10 +111,10 @@ public class Irc {
 	 try {
 		// lock the object in read mode
 		irc.sentence.jvnLockRead();
-		
+
 		// invoke the method
 		String s = ((Sentence)(irc.sentence.jvnGetObjectState())).read();
-		
+
 		// unlock the object
 		irc.sentence.jvnUnLock();
 		
@@ -104,7 +122,7 @@ public class Irc {
 		irc.data.setText(s);
 		irc.text.append(s+"\n");
 	   } catch (JvnException je) {
-		   System.out.println("IRC problem : " + je.getMessage());
+		   System.out.println("IRC problem readListener : " + je.getMessage());
 	   }
 	}
 }
@@ -136,7 +154,7 @@ public class Irc {
 		// unlock the object
 		irc.sentence.jvnUnLock();
 	 } catch (JvnException je) {
-		   System.out.println("IRC problem  : " + je.getMessage());
+		   System.out.println("IRC problem writeListener : " + je.getMessage());
 	 }
 	}
 }
