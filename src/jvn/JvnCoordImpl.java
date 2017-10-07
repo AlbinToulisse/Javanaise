@@ -124,7 +124,6 @@ public class JvnCoordImpl
 		   writeServer.remove(joi);
 		   objects.get(joi).setData(data);
 	   }
-	   if (readServers.get(joi) != null) readServers.get(joi).remove(js);
 	   HashSet<JvnRemoteServer> readMode = readServers.get(joi);
 	   if (readMode != null) {
 		   for (JvnRemoteServer remoteServer : readMode) {
