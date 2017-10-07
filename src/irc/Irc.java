@@ -34,17 +34,23 @@ public class Irc {
 		
 		// look up the IRC object in the JVN server
 		// if not found, create it, and register it in the JVN server
-		JvnObject jo = js.jvnLookupObject("IRC");
-		
-		if (jo == null) {
-			jo = js.jvnCreateObject((Serializable) new Sentence());
+		JvnObject jo1 = js.jvnLookupObject("IRC1");
+		if (jo1 == null) {
+			jo1 = js.jvnCreateObject((Serializable) new Sentence());
 			// after creation, I have a write lock on the object
-			jo.jvnUnLock();
-			js.jvnRegisterObject("IRC", jo);
+			jo1.jvnUnLock();
+			js.jvnRegisterObject("IRC1", jo1);
 		}
+		new Irc(jo1, "IRC1");
 		
-		// create the graphical part of the Chat application
-		new Irc(jo);
+		//Ouverture second IRC
+		JvnObject jo2 = js.jvnLookupObject("IRC2");
+		if (jo2 == null) {
+			jo2 = js.jvnCreateObject((Serializable) new Sentence());
+			jo2.jvnUnLock();
+			js.jvnRegisterObject("IRC2", jo2);
+		}
+		new Irc(jo2, "IRC2");
 	   
 	   } catch (Exception e) {
 		   System.out.println("IRC problem main : " + e.getMessage() + " / " + e.getClass());
@@ -55,9 +61,9 @@ public class Irc {
    * IRC Constructor
    @param jo the JVN object representing the Chat
    **/
-	public Irc(JvnObject jo) {
+	public Irc(JvnObject jo, String title) {
 		sentence = jo;
-		frame=new Frame();
+		frame=new Frame(title);
 		frame.setLayout(new GridLayout(1,1));
 		text=new TextArea(10,60);
 		text.setEditable(false);

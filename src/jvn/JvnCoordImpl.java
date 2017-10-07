@@ -10,9 +10,8 @@ package jvn;
 
 import java.io.Serializable;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 
 
 public class JvnCoordImpl 	
@@ -21,8 +20,8 @@ public class JvnCoordImpl
 	
 	private HashMap<Integer, JvnObject> objects;
 	private HashMap<String, Integer> names;
-	private HashMap<JvnRemoteServer, List<Integer>> remoteObjects;
-	private HashMap<Integer, List<JvnRemoteServer>> readServers;
+	private HashMap<JvnRemoteServer, HashSet<Integer>> remoteObjects;
+	private HashMap<Integer, HashSet<JvnRemoteServer>> readServers;
 	private HashMap<Integer, JvnRemoteServer> writeServer;
 	private int id;
 	
@@ -34,8 +33,8 @@ public class JvnCoordImpl
 		super();
 		objects = new HashMap<Integer, JvnObject>();
 		names = new HashMap<String, Integer>();
-		remoteObjects = new HashMap<JvnRemoteServer, List<Integer>>();
-		readServers = new HashMap<Integer, List<JvnRemoteServer>>();
+		remoteObjects = new HashMap<JvnRemoteServer, HashSet<Integer>>();
+		readServers = new HashMap<Integer, HashSet<JvnRemoteServer>>();
 		writeServer = new HashMap<Integer, JvnRemoteServer>();
 		id = 0;
 	}
@@ -61,11 +60,14 @@ public class JvnCoordImpl
 	  int id = jo.jvnGetObjectId();
 	  objects.put(id, jo);
 	  names.put(jon, id);
-	  List<Integer> serverObjects = remoteObjects.get(js);
-	  if (serverObjects == null) serverObjects = new ArrayList<Integer>();
+	  HashSet<Integer> serverObjects = remoteObjects.get(js);
+	  if (serverObjects == null) serverObjects = new HashSet<Integer>();
 	  serverObjects.add(id);
 	  remoteObjects.put(js, serverObjects);
-	  readServers.put(id, new ArrayList<JvnRemoteServer>());
+	  HashSet<JvnRemoteServer> temp = new HashSet<JvnRemoteServer>();
+	  temp.add(js);
+	  readServers.put(id, temp);
+	  writeServer.put(id, js);
   }
   
   /**
@@ -77,7 +79,7 @@ public class JvnCoordImpl
   public JvnObject jvnLookupObject(String jon, JvnRemoteServer js) throws java.rmi.RemoteException,jvn.JvnException{
 	  JvnObject object = objects.get(names.get(jon));
 	  if (object == null) return null;
-	  if (remoteObjects.get(js) == null) remoteObjects.put(js, new ArrayList<Integer>());
+	  if (remoteObjects.get(js) == null) remoteObjects.put(js, new HashSet<Integer>());
 	  remoteObjects.get(js).add(object.jvnGetObjectId());
 	  return object;
   }
@@ -118,16 +120,18 @@ public class JvnCoordImpl
 		   else data = null;
 	   } else {
 		   data = writeMode.jvnInvalidateWriter(joi);
+		   readServers.get(joi).remove(writeMode);
 		   writeServer.remove(joi);
 		   objects.get(joi).setData(data);
 	   }
-	   List<JvnRemoteServer> readMode = readServers.get(joi);
+	   if (readServers.get(joi) != null) readServers.get(joi).remove(js);
+	   HashSet<JvnRemoteServer> readMode = readServers.get(joi);
 	   if (readMode != null) {
 		   for (JvnRemoteServer remoteServer : readMode) {
 			   remoteServer.jvnInvalidateReader(joi);
 		   }
 	   }
-	   List<JvnRemoteServer> temp = new ArrayList<JvnRemoteServer>();
+	   HashSet<JvnRemoteServer> temp = new HashSet<JvnRemoteServer>();
 	   temp.add(js);
 	   writeServer.put(joi, js);
 	   readServers.put(joi, temp);
