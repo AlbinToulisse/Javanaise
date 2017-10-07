@@ -142,9 +142,7 @@ public class JvnCoordImpl
     public void jvnTerminate(JvnRemoteServer js) throws java.rmi.RemoteException, JvnException {
     	for (Integer id : remoteObjects.get(js)) {
     		readServers.get(id).remove(js);
-    		if (writeServer.get(id).equals(js)) {
-    			writeServer.remove(id);
-    		}
+    		if (writeServer.get(id) != null && writeServer.get(id).equals(js)) writeServer.remove(id);
     	}
     	remoteObjects.remove(js);
     }
