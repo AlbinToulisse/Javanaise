@@ -64,9 +64,7 @@ public class JvnCoordImpl
 	  if (serverObjects == null) serverObjects = new HashSet<Integer>();
 	  serverObjects.add(id);
 	  remoteObjects.put(js, serverObjects);
-	  HashSet<JvnRemoteServer> temp = new HashSet<JvnRemoteServer>();
-	  temp.add(js);
-	  readServers.put(id, temp);
+	  readServers.put(id, new HashSet<JvnRemoteServer>());
 	  writeServer.put(id, js);
   }
   
@@ -97,6 +95,7 @@ public class JvnCoordImpl
 	   if (writeMode == null) data = objects.get(joi).jvnGetObjectState();
 	   else {
 		   data = writeMode.jvnInvalidateWriterForReader(joi);
+		   readServers.get(joi).add(writeMode);
 		   writeServer.remove(joi);
 		   objects.get(joi).setData(data);
 	   }
@@ -130,10 +129,8 @@ public class JvnCoordImpl
 			   remoteServer.jvnInvalidateReader(joi);
 		   }
 	   }
-	   HashSet<JvnRemoteServer> temp = new HashSet<JvnRemoteServer>();
-	   temp.add(js);
+	   readServers.put(joi, new HashSet<JvnRemoteServer>());
 	   writeServer.put(joi, js);
-	   readServers.put(joi, temp);
 	   return data;
    }
 
