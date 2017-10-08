@@ -119,7 +119,6 @@ public class JvnCoordImpl
 		   else data = null;
 	   } else {
 		   data = writeMode.jvnInvalidateWriter(joi);
-		   readServers.get(joi).remove(writeMode);
 		   writeServer.remove(joi);
 		   objects.get(joi).setData(data);
 	   }
