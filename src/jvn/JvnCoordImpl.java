@@ -65,7 +65,6 @@ public class JvnCoordImpl
 	  serverObjects.add(id);
 	  remoteObjects.put(js, serverObjects);
 	  readServers.put(id, new HashSet<JvnRemoteServer>());
-	  writeServer.put(id, js);
   }
   
   /**
