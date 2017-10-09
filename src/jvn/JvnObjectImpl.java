@@ -26,11 +26,6 @@ public class JvnObjectImpl implements JvnObject {
 				break;
 			case WC:
 				state = State.RWC;
-				break;
-			case R:
-			case W:
-			case RWC:
-				throw new JvnException("verrou Read deja pris");
 		}
 	}
 
@@ -43,20 +38,11 @@ public class JvnObjectImpl implements JvnObject {
 			case WC:
 			case RWC:
 				state = State.W;
-				break;
-			case W:
-				throw new JvnException("verrou Write deja pris");
 		}
 	}
 
 	public synchronized void jvnUnLock() throws JvnException {
 		switch(state) {
-			case NL:
-				throw new JvnException("aucun verrou pris");
-			case RC:
-				throw new JvnException("verrou Read deja libere");
-			case WC:
-				throw new JvnException("verrou Write deja libere");
 			case R:
 				state = State.RC;
 				break;
@@ -81,10 +67,6 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnInvalidateReader() throws JvnException {
 		switch(state) {
-			case NL:
-			case WC:
-			case W:
-				throw new JvnException("aucun verrou Read pris");
 			case RC:
 				state = State.NL;
 				break;
@@ -101,10 +83,6 @@ public class JvnObjectImpl implements JvnObject {
 
 	public Serializable jvnInvalidateWriter() throws JvnException {
 		switch(state) {
-			case NL:
-			case RC:
-			case R:
-				throw new JvnException("aucun verrou Write pris");
 			case WC:
 				state = State.NL;
 				break;
@@ -122,10 +100,6 @@ public class JvnObjectImpl implements JvnObject {
 
 	public Serializable jvnInvalidateWriterForReader() throws JvnException {
 		switch(state) {
-			case NL:
-			case RC:
-			case R:
-				throw new JvnException("aucun verrou Write pris");
 			case WC:
 				state = State.RC;
 				break;
