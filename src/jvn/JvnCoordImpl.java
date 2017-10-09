@@ -44,7 +44,7 @@ public class JvnCoordImpl
   *  newly created JVN object)
   * @throws java.rmi.RemoteException,JvnException
   **/
-  public int jvnGetObjectId() throws java.rmi.RemoteException,jvn.JvnException {
+  public synchronized int jvnGetObjectId() throws java.rmi.RemoteException,jvn.JvnException {
 	  return id++;
   }
   
@@ -88,7 +88,7 @@ public class JvnCoordImpl
   * @return the current JVN object state
   * @throws java.rmi.RemoteException, JvnException
   **/
-   public Serializable jvnLockRead(int joi, JvnRemoteServer js) throws java.rmi.RemoteException, JvnException{
+   public synchronized Serializable jvnLockRead(int joi, JvnRemoteServer js) throws java.rmi.RemoteException, JvnException{
 	   JvnRemoteServer writeMode = writeServer.get(joi);
 	   Serializable data;
 	   if (writeMode == null) data = objects.get(joi).jvnGetObjectState();
@@ -109,7 +109,7 @@ public class JvnCoordImpl
   * @return the current JVN object state
   * @throws java.rmi.RemoteException, JvnException
   **/
-   public Serializable jvnLockWrite(int joi, JvnRemoteServer js) throws java.rmi.RemoteException, JvnException{
+   public synchronized Serializable jvnLockWrite(int joi, JvnRemoteServer js) throws java.rmi.RemoteException, JvnException{
 	   JvnRemoteServer writeMode = writeServer.get(joi);
 	   Serializable data;
 	   if (writeMode == null) {
@@ -137,7 +137,7 @@ public class JvnCoordImpl
 	* @param js  : the remote reference of the server
 	* @throws java.rmi.RemoteException, JvnException
 	**/
-    public void jvnTerminate(JvnRemoteServer js) throws java.rmi.RemoteException, JvnException {
+    public synchronized void jvnTerminate(JvnRemoteServer js) throws java.rmi.RemoteException, JvnException {
     	for (Integer id : remoteObjects.get(js)) {
     		readServers.get(id).remove(js);
     		if (writeServer.get(id) != null && writeServer.get(id).equals(js)) writeServer.remove(id);

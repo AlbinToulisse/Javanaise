@@ -17,7 +17,7 @@ public class JvnObjectImpl implements JvnObject {
 		this.data = data;
 	}
 
-	public synchronized void jvnLockRead() throws JvnException {
+	public void jvnLockRead() throws JvnException {
 		switch(state) {
 			case NL:
 				data = JvnServerImpl.jvnGetServer().jvnLockRead(id);
@@ -34,7 +34,7 @@ public class JvnObjectImpl implements JvnObject {
 		}
 	}
 
-	public synchronized void jvnLockWrite() throws JvnException {
+	public void jvnLockWrite() throws JvnException {
 		switch(state) {
 			case NL:
 			case RC:
