@@ -82,7 +82,4 @@ public interface JvnObject extends Serializable {
    
    public State JvnGetState()
      throws jvn.JvnException;
-   
-   public void setState(State state)
-	 throws jvn.JvnException;
 }
