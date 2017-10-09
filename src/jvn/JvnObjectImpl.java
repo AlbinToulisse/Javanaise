@@ -65,7 +65,7 @@ public class JvnObjectImpl implements JvnObject {
 		return state;
 	}
 
-	public void jvnInvalidateReader() throws JvnException {
+	public synchronized void jvnInvalidateReader() throws JvnException {
 		switch(state) {
 			case RC:
 				state = State.NL;
@@ -81,7 +81,7 @@ public class JvnObjectImpl implements JvnObject {
 		}
 	}
 
-	public Serializable jvnInvalidateWriter() throws JvnException {
+	public synchronized Serializable jvnInvalidateWriter() throws JvnException {
 		switch(state) {
 			case WC:
 				state = State.NL;
@@ -98,7 +98,7 @@ public class JvnObjectImpl implements JvnObject {
 		return jvnGetObjectState();
 	}
 
-	public Serializable jvnInvalidateWriterForReader() throws JvnException {
+	public synchronized Serializable jvnInvalidateWriterForReader() throws JvnException {
 		switch(state) {
 			case WC:
 				state = State.RC;
