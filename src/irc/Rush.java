@@ -14,7 +14,7 @@ public class Rush {
 		try {
 			List<JvnObject> objects = new ArrayList<JvnObject>();
 			Random rand = new Random();
-			int nb_object = rand.nextInt(10) + 10;
+			int nb_object = 3;
 			
 			JvnServerImpl js = JvnServerImpl.jvnGetServer();
 			for (int i = 0; i < nb_object; i++) {
