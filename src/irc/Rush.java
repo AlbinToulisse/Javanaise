@@ -12,34 +12,24 @@ import jvn.JvnServerImpl;
 public class Rush {
 	public static void main(String argv[]) {
 		try {
-			List<JvnObject> objects = new ArrayList<JvnObject>();
 			Random rand = new Random();
-			int nb_object = 3;
 			
 			JvnServerImpl js = JvnServerImpl.jvnGetServer();
-			for (int i = 0; i < nb_object; i++) {
-				JvnObject object = js.jvnLookupObject("object" + i);
-				if (object == null) {
-					object = js.jvnCreateObject((Serializable) new Sentence());
-					object.jvnUnLock();
-					js.jvnRegisterObject("object" + i, object);
-				}
-				objects.add(object);
+			JvnObject object = js.jvnLookupObject("IRC1");
+			if (object == null) {
+				object = js.jvnCreateObject((Serializable) new Sentence());
+				object.jvnUnLock();
+				js.jvnRegisterObject("IRC1", object);
 			}
 			
 			while (true) {
-				int id = rand.nextInt(nb_object);
-				JvnObject object = objects.get(id);
 				if (rand.nextInt(2) == 0) {
 					object.jvnLockRead();
-					String s = ((Sentence)(object.jvnGetObjectState())).read();
-					System.out.println("lecture: " + s + ", object: " + id);
+					((Sentence)(object.jvnGetObjectState())).read();
 					object.jvnUnLock();
 				} else {
 					object.jvnLockWrite();
-					String s = String.valueOf(rand.nextInt(100));
-					((Sentence)(object.jvnGetObjectState())).write(s);
-					System.out.println("ecriture: " + s + ", object: " + id);
+					((Sentence)(object.jvnGetObjectState())).write(String.valueOf(rand.nextInt(100)));
 					object.jvnUnLock();
 				}
 			}

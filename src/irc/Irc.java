@@ -44,13 +44,13 @@ public class Irc {
 		new Irc(jo1, "IRC1");
 		
 		//Ouverture second IRC
-		JvnObject jo2 = js.jvnLookupObject("IRC2");
+		/*JvnObject jo2 = js.jvnLookupObject("IRC2");
 		if (jo2 == null) {
 			jo2 = js.jvnCreateObject((Serializable) new Sentence());
 			jo2.jvnUnLock();
 			js.jvnRegisterObject("IRC2", jo2);
 		}
-		new Irc(jo2, "IRC2");
+		new Irc(jo2, "IRC2");*/
 	   
 	   } catch (Exception e) {
 		   System.out.println("IRC problem main : " + e.getMessage() + " / " + e.getClass());
