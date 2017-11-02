@@ -24,7 +24,6 @@ public class JvnServerImpl
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
 	private HashMap<Integer, JvnObject> working;
-	private HashMap<Integer, JvnObject> flushed;
 	private JvnRemoteCoord coord;
 	
 
@@ -35,7 +34,6 @@ public class JvnServerImpl
 	private JvnServerImpl() throws Exception {
 		super();
 		working = new HashMap<Integer, JvnObject>();
-		flushed = new HashMap<Integer, JvnObject>();
 		Registry r = LocateRegistry.getRegistry();
 		coord = (JvnRemoteCoord) r.lookup("coord");
 	}
@@ -148,18 +146,16 @@ public class JvnServerImpl
    public void jvnFlush(int joi) throws JvnException {
 	   try {
 		   coord.jvnRemove(joi, this);
-		   flushed.put(joi, working.get(joi));
 		   working.remove(joi);
 	   } catch (Exception e) {
 		   throw new JvnException(e.getMessage());
 	   }
    }
    
-   public void jvnUnflush(int joi) throws JvnException {
+   public void jvnUnflush(int joi, JvnObject object) throws JvnException {
 	   try {
 		   coord.jvnAdd(joi, this);
-		   working.put(joi, flushed.get(joi));
-		   flushed.remove(joi);
+		   working.put(joi, object);
 	   } catch (Exception e) {
 		   throw new JvnException(e.getMessage());
 	   }
