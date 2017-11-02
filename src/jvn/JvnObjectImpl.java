@@ -19,6 +19,8 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnLockRead() throws JvnException {
 		switch(state) {
+			case FED:
+				JvnServerImpl.jvnGetServer().jvnUnflush(id);
 			case NL:
 				data = JvnServerImpl.jvnGetServer().jvnLockRead(id);
 			case RC:
@@ -31,6 +33,8 @@ public class JvnObjectImpl implements JvnObject {
 
 	public void jvnLockWrite() throws JvnException {
 		switch(state) {
+			case FED:
+				JvnServerImpl.jvnGetServer().jvnUnflush(id);
 			case NL:
 			case RC:
 			case R:
@@ -38,6 +42,13 @@ public class JvnObjectImpl implements JvnObject {
 			case WC:
 			case RWC:
 				state = State.W;
+		}
+	}
+	
+	public void jvnLockFlush() throws JvnException {
+		if (state != State.FED) {
+			JvnServerImpl.jvnGetServer().jvnFlush(id);
+			state = State.FING;
 		}
 	}
 
@@ -49,6 +60,9 @@ public class JvnObjectImpl implements JvnObject {
 			case W:
 			case RWC:
 				state = State.WC;
+				break;
+			case FING:
+				state = State.FED;
 		}
 		notify();
 	}

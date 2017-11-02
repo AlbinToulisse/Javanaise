@@ -6,5 +6,7 @@ public enum State {
 	WC,
 	R,
 	W,
-	RWC	
+	RWC,
+	FING,
+	FED
 }

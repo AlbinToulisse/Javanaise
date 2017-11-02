@@ -22,4 +22,6 @@ public class Sentence implements java.io.Serializable, Interface_Sentence {
 		return data;	
 	}
 	
+	public void flush() {}
+	
 }

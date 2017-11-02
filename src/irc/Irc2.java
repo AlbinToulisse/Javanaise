@@ -47,6 +47,9 @@ public class Irc2 {
 		Button write_button = new Button("write");
 		write_button.addActionListener(new writeListener(this));
 		frame.add(write_button);
+		Button flush_button = new Button("flush");
+		flush_button.addActionListener(new flushListener(this));
+		frame.add(flush_button);
 		frame.addWindowListener(new WindowListener() {
 			public void windowClosing(WindowEvent e) {
 				try {
@@ -100,6 +103,22 @@ public class Irc2 {
 				irc.sentence.write(s);
 			} catch (JvnException je) {
 				System.out.println("IRC problem writeListener : " + je.getMessage());
+			}
+		}
+	}
+	
+	class flushListener implements ActionListener {
+		Irc2 irc;
+	  
+		public flushListener (Irc2 i) {
+			irc = i;
+		}
+		
+		public void actionPerformed (ActionEvent e) {
+			try {
+				irc.sentence.flush();
+			} catch (JvnException je) {
+				System.out.println("IRC problem flushListener : " + je.getMessage());
 			}
 		}
 	}

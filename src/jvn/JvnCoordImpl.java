@@ -13,6 +13,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import irc.Sentence;
+
 
 public class JvnCoordImpl 	
               extends UnicastRemoteObject 
@@ -93,9 +95,15 @@ public class JvnCoordImpl
 	   Serializable data;
 	   if (writeMode == null) data = objects.get(joi).jvnGetObjectState();
 	   else {
-		   data = writeMode.jvnInvalidateWriterForReader(joi);
-		   readServers.get(joi).add(writeMode);
-		   writeServer.remove(joi);
+		   try {
+			   data = writeMode.jvnInvalidateWriterForReader(joi);
+			   readServers.get(joi).add(writeMode);
+			   writeServer.remove(joi);
+		   } catch (Exception e) {
+			   System.out.println("Server " + writeMode + " not responding, terminating");
+			   jvnTerminate(writeMode);
+			   data = objects.get(joi).jvnGetObjectState();
+		   }
 		   objects.get(joi).setData(data);
 	   }
 	   readServers.get(joi).add(js);
@@ -117,14 +125,25 @@ public class JvnCoordImpl
 		   if (object != null) data = object.jvnGetObjectState();
 		   else data = null;
 	   } else {
-		   data = writeMode.jvnInvalidateWriter(joi);
-		   writeServer.remove(joi);
+		   try {
+			   data = writeMode.jvnInvalidateWriter(joi);
+			   writeServer.remove(joi);
+		   } catch (Exception e) {
+			   System.out.println("Server " + writeMode + " not responding, terminating");
+			   jvnTerminate(writeMode);
+			   data = objects.get(joi).jvnGetObjectState();
+		   }
 		   objects.get(joi).setData(data);
 	   }
 	   HashSet<JvnRemoteServer> readMode = readServers.get(joi);
 	   if (readMode != null) {
 		   for (JvnRemoteServer remoteServer : readMode) {
-			   remoteServer.jvnInvalidateReader(joi);
+			   try {
+				   remoteServer.jvnInvalidateReader(joi);
+			   } catch (Exception e) {
+				   System.out.println("Server " + remoteServer + " not responding, terminating");
+				   jvnTerminate(remoteServer);
+			   }
 		   }
 	   }
 	   readServers.put(joi, new HashSet<JvnRemoteServer>());
@@ -143,6 +162,16 @@ public class JvnCoordImpl
     		if (writeServer.get(id) != null && writeServer.get(id).equals(js)) writeServer.remove(id);
     	}
     	remoteObjects.remove(js);
+    }
+    
+    public synchronized void jvnRemove(int joi, JvnRemoteServer js) throws java.rmi.RemoteException, JvnException {
+    	readServers.get(joi).remove(js);
+		if (writeServer.get(joi) != null && writeServer.get(joi).equals(js)) writeServer.remove(joi);
+		remoteObjects.get(js).remove(joi);
+    }
+    
+    public synchronized void jvnAdd(int joi, JvnRemoteServer js) throws java.rmi.RemoteException, JvnException {
+    	remoteObjects.get(js).add(joi);
     }
 }
 

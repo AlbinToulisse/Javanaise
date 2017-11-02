@@ -30,6 +30,9 @@ public interface JvnObject extends Serializable {
 	**/
 	public void jvnLockWrite()
      	throws jvn.JvnException; 
+	
+	public void jvnLockFlush()
+		throws jvn.JvnException;
 
 	/**
 	* Unlock  the object 

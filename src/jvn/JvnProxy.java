@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import annotations.Flush;
 import annotations.Read;
 import annotations.Write;
 import irc.Sentence;
@@ -35,6 +36,7 @@ public class JvnProxy implements InvocationHandler{
 		try {
 			if (m.isAnnotationPresent(Read.class)) object.jvnLockRead();
 			else if (m.isAnnotationPresent(Write.class)) object.jvnLockWrite();
+			else if (m.isAnnotationPresent(Flush.class)) object.jvnLockFlush();
 			else throw new Exception("Annotation error");
 			result = m.invoke(object.jvnGetObjectState(), args);
 			object.jvnUnLock();			
