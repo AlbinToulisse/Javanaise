@@ -23,7 +23,7 @@ public class JvnServerImpl
 	
   // A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
-	private HashMap<Integer, JvnObject> working;
+	private HashMap<Integer, JvnObject> objects;
 	private JvnRemoteCoord coord;
 	
 
@@ -33,7 +33,7 @@ public class JvnServerImpl
   **/
 	private JvnServerImpl() throws Exception {
 		super();
-		working = new HashMap<Integer, JvnObject>();
+		objects = new HashMap<Integer, JvnObject>();
 		Registry r = LocateRegistry.getRegistry();
 		coord = (JvnRemoteCoord) r.lookup("coord");
 	}
@@ -77,7 +77,7 @@ public class JvnServerImpl
 			int id = coord.jvnGetObjectId();
 			JvnObject object = new JvnObjectImpl(id, o);
 			object.jvnLockWrite();
-			working.put(id, object);
+			objects.put(id, object);
 			return object;
 		} catch (Exception e) {
 			throw new JvnException("erreur creation object");
@@ -109,7 +109,7 @@ public class JvnServerImpl
 			JvnObject object = coord.jvnLookupObject(jon, this);
 			if (object == null) return null;
 			JvnObject new_object = new JvnObjectImpl(object.jvnGetObjectId(), object.jvnGetObjectState());
-			working.put(object.jvnGetObjectId(), new_object);
+			objects.put(object.jvnGetObjectId(), new_object);
 			return new_object;
 		} catch (Exception e) {
 			throw new JvnException(e.getMessage());
@@ -146,7 +146,7 @@ public class JvnServerImpl
    public void jvnFlush(int joi) throws JvnException {
 	   try {
 		   coord.jvnRemove(joi, this);
-		   working.remove(joi);
+		   objects.remove(joi);
 	   } catch (Exception e) {
 		   throw new JvnException(e.getMessage());
 	   }
@@ -155,7 +155,7 @@ public class JvnServerImpl
    public void jvnUnflush(int joi, JvnObject object) throws JvnException {
 	   try {
 		   coord.jvnAdd(joi, this);
-		   working.put(joi, object);
+		   objects.put(joi, object);
 	   } catch (Exception e) {
 		   throw new JvnException(e.getMessage());
 	   }
@@ -170,7 +170,7 @@ public class JvnServerImpl
 	* @throws java.rmi.RemoteException,JvnException
 	**/
   public void jvnInvalidateReader(int joi) throws java.rmi.RemoteException,jvn.JvnException {
-		JvnObject object = working.get(joi);
+		JvnObject object = objects.get(joi);
 		object.jvnInvalidateReader();
 	}
 	    
@@ -181,7 +181,7 @@ public class JvnServerImpl
 	* @throws java.rmi.RemoteException,JvnException
 	**/
   public Serializable jvnInvalidateWriter(int joi) throws java.rmi.RemoteException,jvn.JvnException {
-		JvnObject object = working.get(joi);
+		JvnObject object = objects.get(joi);
 		return object.jvnInvalidateWriter();
 	}
 	
@@ -192,7 +192,7 @@ public class JvnServerImpl
 	* @throws java.rmi.RemoteException,JvnException
 	**/
    public Serializable jvnInvalidateWriterForReader(int joi) throws java.rmi.RemoteException,jvn.JvnException { 
-		JvnObject object = working.get(joi);
+		JvnObject object = objects.get(joi);
 		return object.jvnInvalidateWriterForReader();
 	 }
 }
