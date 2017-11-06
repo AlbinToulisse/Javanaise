@@ -1,12 +1,9 @@
 package irc;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Random;
 
-import jvn.JvnObject;
-import jvn.JvnServerImpl;
+import jvn.JvnProxy;
 
 
 public class Rush2 {
@@ -15,21 +12,12 @@ public class Rush2 {
 		try {
 			Calendar cal;
 	        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-			
-			JvnServerImpl js = JvnServerImpl.jvnGetServer();
-			JvnObject object = js.jvnLookupObject("IRC1");
-			if (object == null) {
-				object = js.jvnCreateObject((Serializable) new Sentence());
-				object.jvnUnLock();
-				js.jvnRegisterObject("IRC1", object);
-			}
-			
+			String title = "IRC";
+			Interface_Sentence s = (Interface_Sentence) JvnProxy.newInstance(title, Sentence.class);
 			while (true) {
-				object.jvnLockRead();
-				String s = ((Sentence)(object.jvnGetObjectState())).read();
+				String read = s.read();
 		        cal = Calendar.getInstance();
-				System.out.println(sdf.format(cal.getTime()) + " read " + s);
-				object.jvnUnLock();
+				System.out.println(sdf.format(cal.getTime()) + " read " + read);
 				Thread.sleep(2000);
 			}
 		} catch (Exception e) {

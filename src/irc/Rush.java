@@ -1,40 +1,25 @@
 package irc;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import jvn.JvnObject;
-import jvn.JvnServerImpl;
+import jvn.JvnProxy;
 
 
 public class Rush {
 	public static void main(String argv[]) {
 		try {
 			Random rand = new Random();
-			
-			JvnServerImpl js = JvnServerImpl.jvnGetServer();
-			JvnObject object = js.jvnLookupObject("IRC1");
-			if (object == null) {
-				object = js.jvnCreateObject((Serializable) new Sentence());
-				object.jvnUnLock();
-				js.jvnRegisterObject("IRC1", object);
-			}
-			
+			String title = "IRC";
+			Interface_Sentence s = (Interface_Sentence) JvnProxy.newInstance(title, Sentence.class);
 			while (true) {
 				if (rand.nextInt(2) == 0) {
-					object.jvnLockRead();
-					((Sentence)(object.jvnGetObjectState())).read();
-					object.jvnUnLock();
+					s.read();
 				} else {
-					object.jvnLockWrite();
-					((Sentence)(object.jvnGetObjectState())).write(String.valueOf(rand.nextInt(100)));
-					object.jvnUnLock();
+					s.write(String.valueOf(rand.nextInt(100)));
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("Rush problem : " + e.getMessage() + " / " + e.getClass());
+			System.out.println("Rush2 problem : " + e.getMessage() + " / " + e.getClass());
 		}
 	}
 }
