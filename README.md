@@ -4,12 +4,12 @@
 	
 	
 # Fonctionnalités
-	-Projet fonctionnant via l'utilisation d'un proxy
+	Projet fonctionnant via l'utilisation d'un proxy
 		Permettant de cacher l'utilisation des verrous à l'utilisateur
 		Lancement via La classe Irc2
 		Utiliser Irc pour la version 1 sans proxy
 		
-	-Ajout de deux classes Rush et Rush2
+	Ajout de deux classes Rush et Rush2
 		Rush effectue aléatoirement des read et write en boucle
 		Rush2 effectue un read une fois toutes les 2 secondes afin de surveiller l'état
 		
