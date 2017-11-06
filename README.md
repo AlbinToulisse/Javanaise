@@ -18,6 +18,7 @@
 	Gestion de panne client:
 		En cas de panne client, le coordinateur va terminate le client ne répondant plus
 		Il renvoit ensuite sa propre donnée lorsqu'un autre client demande celle du client ne répondant plus
+		
 	Ajout d'un bouton flush:
 		Un bouton Flush a été rajouté aux boutons Read et Write
 		Ce bouton élimine l'objet de la liste en mémoire du client
